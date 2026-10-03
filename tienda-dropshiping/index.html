@@ -1,0 +1,251 @@
+<!doctype html>
+<html lang="es" data-resolution="portrait">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1080, height=1920" />
+    <link rel="stylesheet" href="brand.css" />
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="reel-ugc-mujer/_work/captions_v6.js"></script>
+    <style>
+      @font-face {
+        font-family: "Good Love";
+        src: url("fonts/Good Love.ttf") format("truetype");
+        font-weight: 900;
+        font-style: normal;
+      }
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      html, body {
+        width: 1080px;
+        height: 1920px;
+        overflow: hidden;
+        background: #000;
+        font-family: system-ui, sans-serif;
+      }
+      #root { position: relative; width: 1080px; height: 1920px; }
+
+      #main-v { width: 1080px; height: 1920px; object-fit: cover; }
+
+      #scrim {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 880px;
+        z-index: 10;
+        background: linear-gradient(
+          to top,
+          rgba(0,0,0,0.78) 0%,
+          rgba(0,0,0,0.46) 40%,
+          rgba(0,0,0,0) 100%
+        );
+        pointer-events: none;
+      }
+
+      #hook {
+        position: absolute;
+        bottom: 348px;
+        left: 0; right: 0;
+        z-index: 40;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 16px;
+      }
+      .hook-chip {
+        display: inline-block;
+        font-family: var(--brand-font);
+        font-weight: var(--brand-font-weight);
+        font-size: 54px;
+        line-height: 1;
+        letter-spacing: -0.01em;
+        padding: 26px 38px 24px;
+        border-radius: var(--hook-radius);
+        white-space: nowrap;
+        will-change: transform, opacity;
+        box-shadow: 0 12px 32px rgba(0,0,0,0.40), 0 4px 12px rgba(0,0,0,0.25);
+      }
+      #hook-l1 { background: var(--brand-dark); color: var(--brand-light); }
+      #hook-l2 { background: var(--brand-accent); color: var(--brand-accent-ink); }
+
+      :root {
+        --caption-base-size: 107px;
+        --caption-min-size: 78px;
+        --caption-bottom: 540px;
+      }
+      #caption-layer {
+        position: absolute;
+        left: 0; right: 0;
+        bottom: var(--caption-bottom);
+        z-index: 20;
+        height: 230px;
+        display: block;
+      }
+      .cw {
+        position: absolute;
+        left: 0; right: 0; bottom: 0;
+        height: 230px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        opacity: 0;
+        visibility: hidden;
+        background: #111;
+      }
+      .cw span {
+        display: inline-block;
+        font-family: var(--brand-font);
+        font-weight: var(--brand-font-weight);
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        color: #fff;
+        padding: 12px 36px;
+        border-radius: 14px;
+        -webkit-text-stroke: 0px;
+        paint-order: stroke fill;
+        text-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        white-space: nowrap;
+      }
+      .cw.emph span {
+        background: var(--brand-accent);
+        color: #fff;
+        text-shadow: 0 0 20px rgba(255,255,255,0.2);
+      }
+    </style>
+  </head>
+  <body>
+    <div
+      id="root"
+      data-composition-id="main"
+      data-start="0"
+      data-duration="27.47"
+      data-width="1080"
+      data-height="1920"
+    >
+      <video
+        id="main-v"
+        class="clip"
+        data-start="0"
+        data-duration="27.47"
+        data-track-index="0"
+        data-media-start="0"
+        src="reel-ugc-mujer/master_ugc2.mp4"
+        muted
+        playsinline
+      ></video>
+      <audio
+        id="main-a"
+        data-start="0"
+        data-duration="27.47"
+        data-track-index="3"
+        data-media-start="0"
+        src="reel-ugc-mujer/master_ugc2.mp4"
+        data-volume="1"
+      ></audio>
+
+      <div id="scrim"></div>
+      <div id="caption-layer"></div>
+      <div id="hook">
+        <div class="hook-chip" id="hook-l1">MI SECRETO PARA</div>
+        <div class="hook-chip" id="hook-l2">PIEL PERFECTA</div>
+      </div>
+    </div>
+
+    <script>
+      const CAPTIONS = window.__CAPTIONS.captions;
+      const DUR = 27.47;
+
+      const shows = CAPTIONS.map((w) => Math.max(0, w.s - 0.03));
+      const WORDS = CAPTIONS.map((w, i) => {
+        const next = CAPTIONS[i + 1];
+        const show = shows[i];
+        let hide;
+        if (next) {
+          const gap = next.s - w.e;
+          hide = gap < 0.45 ? shows[i + 1] : Math.min(w.e + 0.25, shows[i + 1]);
+        } else {
+          hide = Math.min(w.e + 0.4, DUR);
+        }
+        return { ...w, show, hide: Math.max(hide, show) };
+      });
+
+      const cssVar = (n, d) => {
+        const v = parseFloat(getComputedStyle(document.documentElement).getPropertyValue(n));
+        return Number.isFinite(v) ? v : d;
+      };
+      const MAX_W = cssVar("--caption-max-width", 790);
+      const BASE = cssVar("--caption-base-size", 54);
+      const MIN = cssVar("--caption-min-size", 40);
+      const AVG_CHAR = cssVar("--brand-char-width", 0.62);
+      const fontSizeFor = (t) =>
+        Math.max(MIN, Math.min(BASE, Math.floor(MAX_W / (Math.max(t.length, 1) * AVG_CHAR))));
+
+      const layer = document.getElementById("caption-layer");
+      WORDS.forEach((w, i) => {
+        const el = document.createElement("div");
+        el.className = "cw" + (w.emph ? " emph" : "");
+        el.id = "cw-" + i;
+        const sp = document.createElement("span");
+        sp.textContent = w.t;
+        sp.style.fontSize = fontSizeFor(w.t) + "px";
+        el.appendChild(sp);
+        layer.appendChild(el);
+      });
+
+      function refitCaptions() {
+        let shrunk = 0;
+        WORDS.forEach((w, i) => {
+          const sp = document.getElementById("cw-" + i).firstChild;
+          let size = parseFloat(sp.style.fontSize);
+          let guard = 0;
+          while (sp.getBoundingClientRect().width > MAX_W && size > MIN && guard++ < 40) {
+            size -= 1;
+            sp.style.fontSize = size + "px";
+            shrunk = 1;
+          }
+          if (sp.getBoundingClientRect().width > MAX_W) {
+            console.warn("[caption-fit] la palabra \"" + w.t + "\" no entra ni en el tamaño mínimo (" +
+              MIN + "px). Bajá --caption-min-size en brand.json o usá una tipografía más condensada.");
+          }
+        });
+        if (shrunk) console.info("[caption-fit] auto-fit aplicado a las palabras más largas.");
+      }
+      if (document.fonts && document.fonts.ready) document.fonts.ready.then(refitCaptions);
+      else window.addEventListener("load", refitCaptions);
+
+      window.__timelines = window.__timelines || {};
+      const tl = gsap.timeline({ paused: true });
+
+      tl.fromTo("#hook-l1",
+        { opacity: 0, y: -46, scale: 0.86 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.38, ease: "back.out(1.8)" }, 0.12);
+      tl.fromTo("#hook-l2",
+        { opacity: 0, y: -34, scale: 0.82 },
+        { opacity: 1, y: 0, scale: 1, duration: 0.36, ease: "back.out(2.1)" }, 0.30);
+      tl.to("#hook", { opacity: 0, y: -50, duration: 0.26, ease: "power2.in" }, 2.94);
+      tl.set("#hook", { visibility: "hidden" }, 3.2);
+
+      WORDS.forEach((w, i) => {
+        const el = document.getElementById("cw-" + i);
+        tl.set(el, { visibility: "visible", opacity: 1 }, w.show);
+        tl.set(el, { visibility: "hidden", opacity: 0 }, w.hide);
+      });
+
+      window.__timelines["main"] = tl;
+
+      WORDS.forEach((w, i) => {
+        const next = WORDS[i + 1];
+        if (next && w.hide - next.show > 0.001) {
+          console.warn("[caption-lint] overlap palabra " + i + " (" + w.t + ") hide=" +
+            w.hide.toFixed(2) + " > show siguiente=" + next.show.toFixed(2));
+        }
+      });
+      WORDS.forEach((w, i) => {
+        const el = document.getElementById("cw-" + i);
+        tl.seek(w.hide + 0.01);
+        const c = window.getComputedStyle(el);
+        if (c.visibility !== "hidden") {
+          console.warn("[caption-lint] palabra " + i + " visible tras hide t=" + (w.hide + 0.01).toFixed(2));
+        }
+      });
+      tl.seek(0);
+    </script>
+  </body>
+</html>

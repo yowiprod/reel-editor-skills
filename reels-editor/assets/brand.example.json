@@ -1,0 +1,54 @@
+{
+  "_comment": "Ejemplo de brand.json. El real lo genera scripts/setup-brand.mjs; este archivo es solo para ver qué significa cada campo.",
+
+  "brandName": "Mi Marca",
+  "handle": "@mimarca",
+
+  "language": "es",
+  "_language": "código de idioma del audio, va al --language de hyperframes transcribe",
+  "dialect": "neutro",
+  "_dialect": "rioplatense | neutro | peninsular | mexicano ... — define qué convierte el mapa de fix de los captions",
+  "cta": "",
+
+  "colors": {
+    "accent": "#FF3B30",
+    "_accent": "color de marca: chip del punch del hook + palabras de énfasis",
+    "accentInk": "#FFFFFF",
+    "_accentInk": "texto adentro del chip de acento — lo calcula el script por contraste, no se elige a mano",
+    "accentGlow": "rgba(255,59,48,0.45)",
+    "dark": "#0D0D0D",
+    "_dark": "fondo del primer chip. Negro suave, nunca negro puro",
+    "light": "#FFFFFF"
+  },
+
+  "font": {
+    "family": "Anton",
+    "source": "google",
+    "_source": "google (se carga sola) | local (archivo copiado a fonts/ del proyecto)",
+    "url": "https://fonts.googleapis.com/css2?family=Anton:wght@400&display=swap",
+    "weight": 400,
+    "charWidth": 0.5,
+    "_charWidth": "ancho medio de glifo en fracción del font-size: solo la estimación inicial, la composición la refina midiendo"
+  },
+
+  "captions": {
+    "emphasis": "accent",
+    "_emphasis": "accent | white — white cuando el color de marca no lee sobre video oscuro",
+    "emphColor": "#FF3B30",
+    "baseSize": 54,
+    "minSize": 40,
+    "maxWidth": 790,
+    "bottom": 470
+  },
+
+  "hook": { "top": 300, "fontSize": 48, "radius": 18, "uppercase": true },
+
+  "lexicon": {
+    "always": {
+      "_comment": "cómo se escriben SIEMPRE los términos propios que Whisper arruina",
+      "clot code": ["Claude", "Code"],
+      "vibe coding": ["vibecoding"]
+    },
+    "never": ["palabras que la marca no usa nunca"]
+  }
+}
