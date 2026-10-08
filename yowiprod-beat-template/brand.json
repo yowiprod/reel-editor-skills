@@ -1,0 +1,17 @@
+{
+  "_comment": "Marca yowiprod (beat reels). Dos fuentes Chrome: Black para DÍA X, Normal para nombre/key/bpm.",
+  "brandName": "yowiprod",
+  "handle": "@yowiprod",
+  "language": "es",
+  "dialect": "neutro",
+  "colors": { "accent": "#FFD700", "light": "#FFFFFF", "dark": "#0D0D0D" },
+  "fonts": {
+    "heavy": { "family": "ChromeBlack", "file": "fonts/ChromeBlack-Normal.ttf" },
+    "thin":  { "family": "ChromeNormal", "file": "fonts/Chrome-Normal.ttf" }
+  },
+  "title": { "position": "center", "uppercase": true, "background": false,
+             "dia_font": "heavy", "dia_color": "#FFFFFF",
+             "name_font": "thin", "name_color": "#FFD700",
+             "meta_font": "thin", "meta_color": "#FFFFFF" },
+  "generatedAt": "2026-10-08"
+}
