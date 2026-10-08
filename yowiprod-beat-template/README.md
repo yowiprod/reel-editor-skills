@@ -24,6 +24,15 @@ Distinto del pipeline `reels-editor` (ese es para reels hablados con captions).
    ```
    (IN/OUT salen de `silencedetect`; ffmpeg oculta su salida bajo `-v error`.)
 
+   > **Sincronía OBS:** estas grabaciones de OBS capturan la PANTALLA ~2.5–3s
+   > ATRASADA respecto del audio (se escucha el beat antes de verlo; no es offset
+   > de contenedor, es de la captura). Corregir **adelantando el video** vs el
+   > audio: el in-point del trim de video = in-point del audio + Δ (el audio se
+   > queda con el beat; el video se toma Δ más adelante). Día 1: Δ = 2.5s.
+   > Δ varía por grabación → mandar un master sincronizado sin título y que el
+   > usuario confirme/ajuste. El drop del audio no cambia (la ventana de audio no
+   > se toca), así que el `{{DROP}}` del título queda igual.
+
 2. **Drop**: encontrar en qué segundo rompe el beat (salto de energía de bajo):
    ```bash
    ffmpeg -v error -i master.mp4 -af "lowpass=f=150,asetnsamples=n=48000,astats=metadata=1:reset=1,ametadata=print:key=lavfi.astats.Overall.RMS_level:file=-" -f null -
